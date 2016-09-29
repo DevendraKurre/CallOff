@@ -1,0 +1,93 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@mipmap/splash"
+    tools:context="com.kurre.calloff.Login">
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="LOGIN"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="60sp"
+        android:textColor="#FFFFFF"
+        />
+
+    <EditText
+        android:id="@+id/etUserName"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:hint="Enter User Name"
+        android:textColorHint="#2a0836"
+        android:padding="12dp"
+        android:inputType="textPersonName"
+        android:layout_marginRight="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp"
+        android:background="#FFFFFF"/>
+
+    <EditText
+        android:id="@+id/etPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Password"
+        android:inputType="textPassword"
+        android:textColorHint="#2a0836"
+        android:padding="12dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp"
+        android:background="#FFFFFF"/>
+
+    <TextView
+        android:id="@+id/tvLogin"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="LOGIN"
+        android:padding="19dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:textColor="#FFFFFF"
+        android:background="#9361b5"
+        />
+
+    <TextView
+        android:id="@+id/tvRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:textSize="16dip"
+        android:text="Register your self"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView android:id="@+id/tvForgotPass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:textSize="16dip"
+        android:text="Forgot your password"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        />
+
+</LinearLayout>
