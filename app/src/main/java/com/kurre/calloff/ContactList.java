@@ -41,7 +41,7 @@ public class ContactList extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(getApplicationContext(), contactName, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), ContactPage.class);
-                intent.putExtra("contact_name", (Parcelable) parent.getItemAtPosition(position));
+                intent.putExtra("contact_name", (Contact) parent.getItemAtPosition(position));
                 startActivity(intent);
                 finish();
             }

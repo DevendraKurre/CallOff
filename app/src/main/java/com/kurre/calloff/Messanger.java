@@ -2,6 +2,7 @@ package com.kurre.calloff;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.widget.Toast;
 
 import java.net.DatagramPacket;
@@ -22,7 +23,7 @@ public class Messanger {
     Thread reader_thread = null;
     public Context context;
 
-    public void start_server() {
+    public void start_messanger() {
         try {
             myDbHelper = new MyDatabaseHelper(context);
             server_socket = new DatagramSocket(Constants.port_for_sending);
@@ -35,11 +36,15 @@ public class Messanger {
                         Message message = read_header();
                         if (message.messageType == Header.MESSAGE) {
                             final String response = read_message(message.messageLength);
-                            System.out.println("################################################");
                             message.message = response;
-                            MainActivity.myDbHelper.insertMessage(message);
+                            myDbHelper.insertMessage(message);
                             System.out.println(response);
-                            System.out.println("################################################");
+                        } else if (message.messageType == Header.CALL) {
+                            //Starting Call activity on receiving new call header
+                            Intent intent = new Intent(context, ContactPage.class);
+                            intent.putExtra("contact_name", ContactList.getContact(message.sender));
+                            context.startActivity(intent);
+                            //finish();
                         }
                     }
                     client_msg_socket.close();
@@ -51,7 +56,7 @@ public class Messanger {
         }
     }
 
-    public void stop_server() {
+    public void stop_messanger() {
         reader_thread.interrupt();
         server_socket.close();
         System.out.println("Server stopped successfully");
@@ -111,10 +116,13 @@ public class Messanger {
     public void send_message(Message message) {
         try {
             send_header(message);
-            DatagramPacket packet = new DatagramPacket(message.message.getBytes(), message.message.getBytes().length,
-                    InetAddress.getByName(ContactList.getContact(message.reciepient).ip_address),
-                    Constants.port_for_receiving);
-            server_socket.send(packet);
+            if(message.messageType != Header.CALL) {
+                DatagramPacket packet = new DatagramPacket(message.message.getBytes(), message.message.getBytes().length,
+                        InetAddress.getByName(ContactList.getContact(message.reciepient).ip_address),
+                        Constants.port_for_receiving);
+                server_socket.send(packet);
+                myDbHelper.insertMessage(message);
+            }
             System.out.println("data sent");
         } catch (java.io.IOException e) {
             e.printStackTrace();

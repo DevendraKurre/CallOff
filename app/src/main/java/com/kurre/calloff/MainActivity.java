@@ -22,6 +22,10 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    //User details
+    public static String USER_NAME;
+    public static String PHONE_NUMBER;
+
     public static Messanger myMessanger = new Messanger();
     public static MyDatabaseHelper myDbHelper;
     ListView lvResentChatList;;
@@ -36,13 +40,12 @@ public class MainActivity extends AppCompatActivity {
 
         myDbHelper = new MyDatabaseHelper(this);
         myMessanger.context = this;
-        myMessanger.start_server();
+        myMessanger.start_messanger();
 
         lvResentChatList = (ListView) findViewById(R.id.lvResentList);
         lvResentChatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getApplicationContext(), contactName, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), ContactPage.class);
                 intent.putExtra("contact_name", (Parcelable) parent.getItemAtPosition(position));
                 startActivity(intent);
@@ -60,22 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    public static void loadList(String data) {
-        String[] dataArray = data.substring(0, data.length()-1).split(",");
-
-        for (String eachContact : dataArray) {
-            String[] contact_details = eachContact.split("#");
-            Contact newContact = new Contact(contact_details[0], contact_details[1], contact_details[2]);
-            if (!ContactList.lContacts.contains(newContact))ContactList.lContacts.add(newContact);
-        }
-    }
-
-    public static void sendMessage(Message message) {
-        myMessanger.send_message(message);
-        long result = myDbHelper.insertMessage(message);
-        System.out.println("Insert result:- " + result);
     }
 
     private class MyRecentChatListAdapter extends ArrayAdapter<Contact> {

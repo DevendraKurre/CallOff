@@ -5,9 +5,6 @@ package com.kurre.calloff;
  */
 public interface Constants {
 
-    long phone_number = 7204457089L;
-    String my_name = "Dev";
-
     int port_for_sending = 2225;
     int port_for_receiving = 2226;
 

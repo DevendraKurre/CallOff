@@ -45,20 +45,16 @@ public class Worker extends AsyncTask {
         URL url;
         try {
             url = new URL(urlToFetchData);
-            HttpURLConnection conexion = (HttpURLConnection) url
-                    .openConnection();
+            HttpURLConnection conexion = (HttpURLConnection) url.openConnection();
             System.out.println("Connection created and opened");
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conexion.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
             System.out.println("Starting data read");
-
             String linea = reader.readLine();
             while (linea != null) {
                 pagina += linea;
                 linea = reader.readLine();
             }
             reader.close();
-
             devuelve = pagina;
             conexion.disconnect();
             return devuelve;
@@ -73,8 +69,10 @@ public class Worker extends AsyncTask {
         String response = (String) result;
         Toast toast = null;
         if (this.task == task.LOGIN) {
-            response = "1";                                                 //For testing purpose making all logins successfull.
-            if ("1".equals(response)) {
+            //response = "1";                                                 //For testing purpose making all logins successfull.
+            if (response!= null && !response.isEmpty() && response.contains("#")) {
+                MainActivity.USER_NAME = response.split("#")[0];
+                MainActivity.USER_NAME = response.split("#")[1];
                 Worker worker = new Worker(this.context, Constants.task.GET_CONTACTS);
                 worker.execute(Constants.GET_CONTACTS_URL);
                 toast = Toast.makeText(context, Constants.LOGIN_SUCCESS, Toast.LENGTH_SHORT);
@@ -86,12 +84,22 @@ public class Worker extends AsyncTask {
         } else if (this.task == task.RESET) {
             toast = Toast.makeText(context, Constants.LOGIN_FAILED, Toast.LENGTH_SHORT);
         } else if (this.task == task.GET_CONTACTS) {
-            MainActivity.loadList(response);
+            loadContactList(response);
             Intent intent = new Intent(this.context, MainActivity.class);
             this.context.startActivity(intent);
             ((Activity)this.context).finish();
         }
         if (toast != null) toast.show();
+    }
+
+    public static void loadContactList(String data) {
+        String[] dataArray = data.substring(0, data.length()-1).split(",");
+
+        for (String eachContact : dataArray) {
+            String[] contact_details = eachContact.split("#");
+            Contact newContact = new Contact(contact_details[0], contact_details[1], contact_details[2]);
+            if (!ContactList.lContacts.contains(newContact))ContactList.lContacts.add(newContact);
+        }
     }
 
 }

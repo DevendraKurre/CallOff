@@ -1,9 +1,7 @@
 package com.kurre.calloff;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,15 +15,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 public class ContactPage extends AppCompatActivity implements View.OnClickListener {
 
     EditText etEnterMessage;
-    Button btnSend;
+    Button btnSend, btnCall;
     Contact contact;
+    ListView lvMessageList;
+    MyMessageListAdapter myAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +34,13 @@ public class ContactPage extends AppCompatActivity implements View.OnClickListen
         etEnterMessage = (EditText) findViewById(R.id.etEnterMessage);
         btnSend = (Button) findViewById(R.id.btnSend);
         btnSend.setOnClickListener(this);
+        btnCall = (Button) findViewById(R.id.btnCall);
+        btnCall.setOnClickListener(this);
 
         contact = getIntent().getExtras().getParcelable("contact_name");
         Toast.makeText(this, contact.name, Toast.LENGTH_SHORT).show();
 
-        ListView lvMessageList = (ListView) findViewById(R.id.lvChatHistory);
+        lvMessageList = (ListView) findViewById(R.id.lvChatHistory);
         lvMessageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -49,7 +50,7 @@ public class ContactPage extends AppCompatActivity implements View.OnClickListen
 
         List<Message> lMessages = MainActivity.myDbHelper.readMessageFrom(contact.phone_number);
 
-        MyMessageListAdapter myAdapter = new MyMessageListAdapter(this, R.layout.contact_list_entry, lMessages);
+        myAdapter = new MyMessageListAdapter(this, R.layout.contact_list_entry, lMessages);
         lvMessageList.setAdapter(myAdapter);
 
     }
@@ -57,15 +58,40 @@ public class ContactPage extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btnSend) {
+            String msg = etEnterMessage.getText().toString();
+            final Message message = new Message(MainActivity.PHONE_NUMBER, contact.phone_number, "out", msg);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    String msg = etEnterMessage.getText().toString();
-                    Message message = new Message("" + Constants.phone_number, contact.phone_number, "out", msg);
-                    MainActivity.sendMessage(message);
+                    MainActivity.myMessanger.send_message(message);
                 }
             }).start();
+            myAdapter.addMessage(message);
+            myAdapter.notifyDataSetChanged();
+            etEnterMessage.setText("");
+        } else if (v.getId() == R.id.btnCall) {
+            Intent intent = new Intent(getApplicationContext(), Call.class);
+            intent.putExtra("contact_name", contact);
+            startActivity(intent);
+            //finish(); no need to finish current activity;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        System.out.println("On destroy called");
+        super.onDestroy();
+    }
+
+    public void refreshContactChat() {
+        List<Message> lMessages = MainActivity.myDbHelper.readMessageFrom(contact.phone_number);
+        HashMap<Integer, Message> messages = new HashMap<>();
+        for (int i = 0; i < lMessages.size(); ++i) {
+            messages.put(i, lMessages.get(i));
+        }
+        myAdapter.mMessages = messages;
+        myAdapter.notifyDataSetChanged();
+
     }
 
     private class MyMessageListAdapter extends ArrayAdapter<Message> {
@@ -77,6 +103,10 @@ public class ContactPage extends AppCompatActivity implements View.OnClickListen
             for (int i = 0; i < objects.size(); ++i) {
                 mMessages.put(i, objects.get(i));
             }
+        }
+
+        public void addMessage(Message message) {
+            mMessages.put(mMessages.size(), message);
         }
 
         @Override

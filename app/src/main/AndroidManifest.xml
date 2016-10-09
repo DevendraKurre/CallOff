@@ -35,7 +35,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.kurre.calloff.MainActivity" />
         </activity>
-        <activity android:name=".ContactPage"></activity>
+        <activity android:name=".ContactPage" />
+        <activity android:name=".Call"></activity>
     </application>
 
 </manifest>
