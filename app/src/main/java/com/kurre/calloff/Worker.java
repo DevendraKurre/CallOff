@@ -72,7 +72,7 @@ public class Worker extends AsyncTask {
             //response = "1";                                                 //For testing purpose making all logins successfull.
             if (response!= null && !response.isEmpty() && response.contains("#")) {
                 MainActivity.USER_NAME = response.split("#")[0];
-                MainActivity.USER_NAME = response.split("#")[1];
+                MainActivity.PHONE_NUMBER = response.split("#")[1];
                 Worker worker = new Worker(this.context, Constants.task.GET_CONTACTS);
                 worker.execute(Constants.GET_CONTACTS_URL);
                 toast = Toast.makeText(context, Constants.LOGIN_SUCCESS, Toast.LENGTH_SHORT);

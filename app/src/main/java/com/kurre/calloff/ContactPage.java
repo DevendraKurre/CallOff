@@ -72,6 +72,7 @@ public class ContactPage extends AppCompatActivity implements View.OnClickListen
         } else if (v.getId() == R.id.btnCall) {
             Intent intent = new Intent(getApplicationContext(), Call.class);
             intent.putExtra("contact_name", contact);
+            intent.putExtra("call_direction", "out");
             startActivity(intent);
             //finish(); no need to finish current activity;
         }

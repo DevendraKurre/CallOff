@@ -27,8 +27,10 @@ public class MainActivity extends AppCompatActivity {
     public static String PHONE_NUMBER;
 
     public static Messanger myMessanger = new Messanger();
+    public static Call callActivity = null;
     public static MyDatabaseHelper myDbHelper;
-    ListView lvResentChatList;;
+
+    ListView lvResentChatList;
     Map<Contact, String> mRecentChat;
 
     @Override

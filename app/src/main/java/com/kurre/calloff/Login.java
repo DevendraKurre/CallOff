@@ -38,8 +38,7 @@ public class Login extends Activity implements OnClickListener {
         {
             case R.id.tvLogin:
                 worker = new Worker(this, Constants.task.LOGIN);
-                //worker.execute(Constants.LOGIN_URL + "?user_name=" +etUserName.getText() + "&password=" + etPassword.getText() );
-                worker.execute(Constants.LOGIN_URL + "?user_name=admin&password=admin");
+                worker.execute(Constants.LOGIN_URL + "?user_name=" +etUserName.getText() + "&password=" + etPassword.getText() );
                 break;
             case R.id.tvRegister:
 

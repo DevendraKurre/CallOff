@@ -5,8 +5,11 @@ package com.kurre.calloff;
  */
 public interface Constants {
 
-    int port_for_sending = 2225;
-    int port_for_receiving = 2226;
+    int port_for_msg_sending = 2225;
+    int port_for_msg_receiving = 2226;
+    int port_for_call_sending = 2227;
+    int port_for_call_receiving = 2228;
+
 
     String LOGIN_URL = "http://192.168.1.174/calloff/login.php";
     String REGISTER_URL = "";
@@ -15,7 +18,7 @@ public interface Constants {
 
     enum task {
         LOGIN, REGISTER, RESET, GET_CONTACTS
-    };
+    }
 
     //Messages
     String LOGIN_FAILED = "Login Failed! Please try again...";

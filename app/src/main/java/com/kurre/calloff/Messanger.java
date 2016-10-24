@@ -1,16 +1,13 @@
 package com.kurre.calloff;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.Toast;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
-import java.util.Date;
 
 /**
  * Created by kurre on 26-09-2016.
@@ -26,8 +23,8 @@ public class Messanger {
     public void start_messanger() {
         try {
             myDbHelper = new MyDatabaseHelper(context);
-            server_socket = new DatagramSocket(Constants.port_for_sending);
-            client_msg_socket = new DatagramSocket(Constants.port_for_receiving);
+            server_socket = new DatagramSocket(Constants.port_for_msg_sending);
+            client_msg_socket = new DatagramSocket(Constants.port_for_msg_receiving);
             reader_thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -39,12 +36,19 @@ public class Messanger {
                             message.message = response;
                             myDbHelper.insertMessage(message);
                             System.out.println(response);
-                        } else if (message.messageType == Header.CALL) {
+                        } else if (message.messageType == Header.CALL_INITIATED) {
                             //Starting Call activity on receiving new call header
-                            Intent intent = new Intent(context, ContactPage.class);
+                            Intent intent = new Intent(context, Call.class);
                             intent.putExtra("contact_name", ContactList.getContact(message.sender));
+                            intent.putExtra("call_direction", "in");
                             context.startActivity(intent);
                             //finish();
+                        } else if (message.messageType == Header.CALL_DISCONNECT) {
+                            if(MainActivity.callActivity != null)
+                                MainActivity.callActivity.endCall();
+                        } else if (message.messageType == Header.CALL_CONNECTED) {
+                            if(MainActivity.callActivity != null)
+                                MainActivity.callActivity.startCall();
                         }
                     }
                     client_msg_socket.close();
@@ -76,7 +80,9 @@ public class Messanger {
             System.out.println("Senders Mobile number is: " + sender);
             System.out.println("Operation type is: " + content_type);
             System.out.println("Data length is: " + data_length);
-            return new Message(sender.toString(), receiver.toString() + "", "in", data_length);
+            Message msg = new Message(sender.toString(), receiver.toString() + "", "in", data_length);
+            msg.messageType = content_type;
+            return msg;
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
@@ -103,10 +109,10 @@ public class Messanger {
             ByteBuffer header = ByteBuffer.allocate(Header.HEADER_LEN);
             header.putLong(Long.parseLong(message.sender));
             header.putLong(Long.parseLong(message.reciepient));
-            header.putInt(Header.MESSAGE).putInt(message.message.getBytes().length);
+            header.putInt(message.messageType).putInt(message.message.getBytes().length);
             DatagramPacket packet = new DatagramPacket(header.array(), Header.HEADER_LEN,
                     InetAddress.getByName(ContactList.getContact(message.reciepient).ip_address),
-                    Constants.port_for_receiving);
+                    Constants.port_for_msg_receiving);
             server_socket.send(packet);
         } catch (java.io.IOException e) {
             e.printStackTrace();
@@ -116,10 +122,10 @@ public class Messanger {
     public void send_message(Message message) {
         try {
             send_header(message);
-            if(message.messageType != Header.CALL) {
+            if(message.messageType == Header.MESSAGE) {
                 DatagramPacket packet = new DatagramPacket(message.message.getBytes(), message.message.getBytes().length,
                         InetAddress.getByName(ContactList.getContact(message.reciepient).ip_address),
-                        Constants.port_for_receiving);
+                        Constants.port_for_msg_receiving);
                 server_socket.send(packet);
                 myDbHelper.insertMessage(message);
             }
@@ -134,7 +140,7 @@ public class Messanger {
  * Header format
  * 1st 8 bytes represents sender's mobile number
  * 2nd 8 bytes represent receiver's mobile number
- * next 4 bytes contains type of content (e.g 1 (CALL) or 2 (MESSAGW))
+ * next 4 bytes contains type of content (e.g 1 (MESSAGE) or 2 (CALL_INITIATED) or 3 (CALL_DISCONNECT))
  * next 4 bytes represents length of message content in case of MESSAGE operation
  */
 class Header {
@@ -142,5 +148,7 @@ class Header {
 
     //Operations type
     public static int MESSAGE = 1;
-    public static int CALL = 2;
+    public static int CALL_INITIATED = 2;
+    public static int CALL_CONNECTED = 3;
+    public static int CALL_DISCONNECT = 4;
 }
