@@ -32,7 +32,9 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/btnSend"
-        android:choiceMode="singleChoice" />
+        android:choiceMode="singleChoice"
+        android:transcriptMode="alwaysScroll"
+        android:stackFromBottom="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -42,4 +44,13 @@
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/etEnterMessage"
         android:layout_marginBottom="47dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voice Msg"
+        android:id="@+id/btnVoiceMsg"
+        android:layout_above="@+id/btnCall"
+        android:layout_toEndOf="@+id/etEnterMessage"
+        android:longClickable="true" />
 </RelativeLayout>

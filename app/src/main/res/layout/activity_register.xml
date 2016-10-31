@@ -9,12 +9,12 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@mipmap/splash"
-    tools:context="com.kurre.calloff.Login">
+    tools:context="com.kurre.calloff.Register">
 
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="Login"
+        android:text="Register"
         android:layout_marginRight="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="25dp"
@@ -49,12 +49,37 @@
         android:layout_marginLeft="25dp"
         android:layout_marginTop="25dp"
         android:background="#FFFFFF"/>
+    <EditText
+        android:id="@+id/etRePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Re-Enter Password"
+        android:inputType="textPassword"
+        android:textColorHint="#2a0836"
+        android:padding="12dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp"
+        android:background="#FFFFFF"/>
+
+    <EditText
+        android:id="@+id/etMobileNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Mobile Number"
+        android:inputType="phone"
+        android:textColorHint="#2a0836"
+        android:padding="12dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp"
+        android:background="#FFFFFF"/>
 
     <TextView
-        android:id="@+id/tvLogin"
+        android:id="@+id/tvRegister"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="LOGIN"
+        android:text="Register"
         android:padding="19dp"
         android:layout_marginRight="12dp"
         android:layout_marginLeft="12dp"
@@ -64,30 +89,6 @@
         android:textSize="22sp"
         android:textColor="#FFFFFF"
         android:background="#9361b5"
-        />
-
-    <TextView
-        android:id="@+id/tvRegisterLink"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:textSize="16dip"
-        android:text="Register your self"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:layout_marginTop="30dp"
-        />
-
-    <TextView android:id="@+id/tvForgotPassLink"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:gravity="center"
-        android:textSize="16dip"
-        android:text="Forgot your password"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
         />
 
 </LinearLayout>

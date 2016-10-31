@@ -31,11 +31,12 @@ public class Message {
         this.messageLength = messgeLength;
     }
 
-    public Message(String sender, String receiver, String messageDirection, String timestamp, String message) {
+    public Message(String sender, String receiver, String messageDirection, String timestamp, String message, int type) {
         this.sender = sender;
         this.reciepient = receiver;
         this.timestamp = timestamp;
         this.messageDirection = messageDirection;
         this.message = message;
+        this.messageType = type;
     }
 }

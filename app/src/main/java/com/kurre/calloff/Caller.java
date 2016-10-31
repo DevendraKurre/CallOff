@@ -23,10 +23,11 @@ public class Caller {
 
     AudioRecord recorder;
 
-    private int sampleRate = 16000;//44100;
-    private int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_MONO;
+    private int sampleRate = 44100;//16000;//44100;
+    private int channelConfig = AudioFormat.CHANNEL_IN_MONO;
+    //private int nesdf = AudioFormat.CHANNEL_CONFIGURATION_MONO;
     private int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-    int minBufSize = 100; // AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
+    int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
     private boolean status = true;
 
     Caller(String ip_address) {
@@ -49,14 +50,21 @@ public class Caller {
         try {
 
             byte[] buffer = new byte[minBufSize];
+
+            /*MediaRecorder mRecorder = new MediaRecorder();
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder;
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            */
             DatagramPacket packet;
             final InetAddress destination = InetAddress.getByName(ip_address);
-            recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,sampleRate,channelConfig,audioFormat,minBufSize*10);
+            recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelConfig, audioFormat, minBufSize*10);
             recorder.startRecording();
             while(!Thread.currentThread().isInterrupted() && !call_sender_socket.isClosed()) {
                 minBufSize = recorder.read(buffer, 0, buffer.length);
-                packet = new DatagramPacket (buffer, buffer.length, destination, Constants.port_for_call_receiving);
-                call_sender_socket.send(packet);
+                //packet = new DatagramPacket (buffer, buffer.length, destination, Constants.port_for_call_receiving);
+                //call_sender_socket.send(packet);
                 System.out.println("Data Send during call of length: " + minBufSize);
             }
 
@@ -70,8 +78,8 @@ public class Caller {
             System.out.println("Starting to receive");
             byte[] receiveData = new byte[minBufSize];
             AudioTrack track = null;
-            int N = AudioRecord.getMinBufferSize(8000,AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_16BIT);
-            track = new AudioTrack(AudioManager.STREAM_MUSIC, 8000, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT, N*10, AudioTrack.MODE_STREAM);
+            int N = minBufSize;//AudioRecord.getMinBufferSize(sampleRate,AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_16BIT);
+            track = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate, AudioFormat.CHANNEL_OUT_MONO, audioFormat, N*10, AudioTrack.MODE_STREAM);
             while(!Thread.currentThread().isInterrupted() && !call_receiver_socket.isClosed()) {
                 System.out.println("Starting while loop to receive data");
                 DatagramPacket packet = new DatagramPacket(receiveData, receiveData.length);

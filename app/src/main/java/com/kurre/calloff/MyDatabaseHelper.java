@@ -42,13 +42,15 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String MESSAGE_TABLE_RECEIVER = "receiver";
     public static final String MESSAGE_TABLE_DIRECTION = "direction";
     public static final String MESSAGE_TABLE_CONTENT = "content";
+    public static final String MESSAGE_TABLE_TYPE = "type";
     String query_create_table_message = "CREATE TABLE " + MESSAGE_TABLE + " (" +
             MESSAGE_TABLE_ID + " INTEGER PRIMARY KEY," +
             MESSAGE_TABLE_TIMESTAMP + " TEXT," +
             MESSAGE_TABLE_SENDER + " TEXT," +
             MESSAGE_TABLE_RECEIVER + " TEXT," +
             MESSAGE_TABLE_DIRECTION + " TEXT," +
-            MESSAGE_TABLE_CONTENT + " TEXT" +
+            MESSAGE_TABLE_CONTENT + " TEXT," +
+            MESSAGE_TABLE_TYPE + " TEXT" +
             ")";
     String query_delete_table_user_message = "DROP TABLE IF EXISTS " + MESSAGE_TABLE;
 
@@ -79,6 +81,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         content.put(MESSAGE_TABLE_SENDER, message.sender);
         content.put(MESSAGE_TABLE_RECEIVER, message.reciepient);
         content.put(MESSAGE_TABLE_CONTENT, message.message);
+        content.put(MESSAGE_TABLE_TYPE, message.messageType);
         return myDb.insert(MESSAGE_TABLE, null, content);
     }
 
@@ -97,19 +100,20 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             String receiver = crcr.getString(crcr.getColumnIndex(MESSAGE_TABLE_RECEIVER));
             String direction = crcr.getString(crcr.getColumnIndex(MESSAGE_TABLE_DIRECTION));
             String timestamp = crcr.getString(crcr.getColumnIndex(MESSAGE_TABLE_TIMESTAMP));
-            lMessages.add(new Message(sender, receiver, direction, timestamp, content));
+            int type = crcr.getInt(crcr.getColumnIndex(MESSAGE_TABLE_TYPE));
+            lMessages.add(new Message(sender, receiver, direction, timestamp, content, type));
             System.out.println(content + " -> " + sender + " -> " + receiver + " -> " + direction + " -> " + timestamp);
         }
         crcr.close();
         return lMessages;
     }
 
-    public Map<Contact, String> readRecentChat() {
-        Map<Contact, String> recentChat = new HashMap<>();
+    public Map<Contact, Message> readRecentChat() {
+        Map<Contact, Message> recentChat = new HashMap<>();
         for (Contact eachContact : ContactList.lContacts) {
             List<Message> msg = readMessageFrom(eachContact.phone_number);
             if (!msg.isEmpty())
-                recentChat.put(eachContact, msg.get(0).message);
+                recentChat.put(eachContact, msg.get(msg.size()-1));
         }
         return recentChat;
     }

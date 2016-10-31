@@ -122,11 +122,13 @@ public class Call extends AppCompatActivity implements View.OnClickListener {
     }
 
     public void startCall() {
+        System.out.println("Call is picked by other person");
         isCallConnected = true;
         caller.start_caller();
     }
 
     public void endCall() {
+        caller.stop_caller();
         new Thread(new Runnable() {
             @Override
             public void run() {

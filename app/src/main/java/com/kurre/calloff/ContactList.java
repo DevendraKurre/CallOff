@@ -3,7 +3,6 @@ package com.kurre.calloff;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,10 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,7 +36,6 @@ public class ContactList extends AppCompatActivity {
         lvContactsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(getApplicationContext(), contactName, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), ContactPage.class);
                 intent.putExtra("contact_name", (Contact) parent.getItemAtPosition(position));
                 startActivity(intent);

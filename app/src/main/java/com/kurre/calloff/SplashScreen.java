@@ -39,5 +39,8 @@ public class SplashScreen extends AppCompatActivity {
             }
         }, 3000);
         */
+
+        //Checks and Creates directory structure at the time of startup of app
+        InitializeApp.initializeAll();
     }
 }

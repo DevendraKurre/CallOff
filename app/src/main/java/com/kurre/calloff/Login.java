@@ -1,6 +1,7 @@
 package com.kurre.calloff;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,8 +13,8 @@ import android.widget.TextView;
  */
 public class Login extends Activity implements OnClickListener {
 
-    EditText etUserName,etPassword;
-    TextView tvLogin,tvSign,tvLink;
+    EditText etUserName, etPassword;
+    TextView tvLogin, tvForgotPassLink, tvRegisterLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +24,12 @@ public class Login extends Activity implements OnClickListener {
         etPassword= (EditText) findViewById(R.id.etPassword);
         etUserName= (EditText) findViewById(R.id.etUserName);
         tvLogin= (TextView) findViewById(R.id.tvLogin);
-        tvSign= (TextView) findViewById(R.id.tvForgotPass);
-        tvLink=(TextView) findViewById(R.id.tvRegister);
+        tvForgotPassLink = (TextView) findViewById(R.id.tvForgotPassLink);
+        tvRegisterLink =(TextView) findViewById(R.id.tvRegisterLink);
 
         tvLogin.setOnClickListener(this);
-        tvSign.setOnClickListener(this);
-
+        tvForgotPassLink.setOnClickListener(this);
+        tvRegisterLink.setOnClickListener(this);
     }
 
     @Override
@@ -40,10 +41,12 @@ public class Login extends Activity implements OnClickListener {
                 worker = new Worker(this, Constants.task.LOGIN);
                 worker.execute(Constants.LOGIN_URL + "?user_name=" +etUserName.getText() + "&password=" + etPassword.getText() );
                 break;
-            case R.id.tvRegister:
-
+            case R.id.tvRegisterLink:
+                Intent intent = new Intent(getApplicationContext(), Register.class);
+                startActivity(intent);
+                //finish();
                 break;
-            case R.id.tvForgotPass:
+            case R.id.tvForgotPassLink:
 
                 break;
 

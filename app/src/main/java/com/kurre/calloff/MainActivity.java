@@ -28,10 +28,13 @@ public class MainActivity extends AppCompatActivity {
 
     public static Messanger myMessanger = new Messanger();
     public static Call callActivity = null;
+    public static ContactPage contactPage = null;
+    public static MainActivity mainPage = null;
     public static MyDatabaseHelper myDbHelper;
 
     ListView lvResentChatList;
-    Map<Contact, String> mRecentChat;
+    MyRecentChatListAdapter myAdapter;
+    Map<Contact, Message> mRecentChat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         myDbHelper = new MyDatabaseHelper(this);
         myMessanger.context = this;
+        mainPage = this;
         myMessanger.start_messanger();
 
         lvResentChatList = (ListView) findViewById(R.id.lvResentList);
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mRecentChat = myDbHelper.readRecentChat();
-        MyRecentChatListAdapter myAdapter = new MyRecentChatListAdapter(this, R.layout.contact_list_entry, new ArrayList<>(mRecentChat.keySet()));
+        myAdapter = new MyRecentChatListAdapter(this, R.layout.contact_list_entry, new ArrayList<>(mRecentChat.keySet()));
         lvResentChatList.setAdapter(myAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -63,6 +67,22 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ContactList.class);
                 startActivity(intent);
+            }
+        });
+    }
+
+    public void refreshRecentChat() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Map<Contact, Message> lContact = MainActivity.myDbHelper.readRecentChat();;
+                HashMap<Integer, Contact> contacts = new HashMap<>();
+                int i = 0;
+                for (Contact contact : lContact.keySet()) {
+                    contacts.put(i, contact);
+                }
+                myAdapter.mContacts = contacts;
+                myAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -102,7 +122,10 @@ public class MainActivity extends AppCompatActivity {
                 TextView tvContactName = (TextView) v.findViewById(R.id.tvContactName);
                 TextView tvContactNumber = (TextView) v.findViewById(R.id.tvContactNumber);
                 tvContactName.setText(contact.name);
-                tvContactNumber.setText(mRecentChat.get(contact));
+                if(mRecentChat.get(contact).messageType == Header.AUDIO)
+                    tvContactNumber.setText("Audio Message");
+                else
+                    tvContactNumber.setText(mRecentChat.get(contact).message);
             }
             return v;
         }

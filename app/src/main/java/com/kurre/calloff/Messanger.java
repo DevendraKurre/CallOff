@@ -2,12 +2,15 @@ package com.kurre.calloff;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by kurre on 26-09-2016.
@@ -35,6 +38,9 @@ public class Messanger {
                             final String response = read_message(message.messageLength);
                             message.message = response;
                             myDbHelper.insertMessage(message);
+                            if (MainActivity.contactPage != null)
+                                MainActivity.contactPage.refreshContactChat();
+                            MainActivity.mainPage.refreshRecentChat();
                             System.out.println(response);
                         } else if (message.messageType == Header.CALL_INITIATED) {
                             //Starting Call activity on receiving new call header
@@ -49,6 +55,16 @@ public class Messanger {
                         } else if (message.messageType == Header.CALL_CONNECTED) {
                             if(MainActivity.callActivity != null)
                                 MainActivity.callActivity.startCall();
+                        } else if (message.messageType == Header.AUDIO) {
+                            System.out.println("Audio message received");
+                            String timestamp = new SimpleDateFormat("yyyyMMdd-hh-mm-ss").format(new Date());
+                            message.message = "/" + Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Constants.DIRECTORY_AUDIO + "/" + timestamp + message.sender + ".3gp";
+                            NewMessanger msger = NewMessanger.getNewMessanger();
+                            msger.receiveFile(message.message);
+                            myDbHelper.insertMessage(message);
+                            if (MainActivity.contactPage != null)
+                                MainActivity.contactPage.refreshContactChat();
+                            MainActivity.mainPage.refreshRecentChat();
                         }
                     }
                     client_msg_socket.close();
@@ -127,8 +143,11 @@ public class Messanger {
                         InetAddress.getByName(ContactList.getContact(message.reciepient).ip_address),
                         Constants.port_for_msg_receiving);
                 server_socket.send(packet);
-                myDbHelper.insertMessage(message);
+            } else if(message.messageType == Header.AUDIO) {
+                NewMessanger msger = NewMessanger.getNewMessanger();
+                msger.send_file(ContactList.getContact(message.reciepient).ip_address, message.message);
             }
+            myDbHelper.insertMessage(message);
             System.out.println("data sent");
         } catch (java.io.IOException e) {
             e.printStackTrace();
@@ -151,4 +170,5 @@ class Header {
     public static int CALL_INITIATED = 2;
     public static int CALL_CONNECTED = 3;
     public static int CALL_DISCONNECT = 4;
+    public static int AUDIO = 5;
 }

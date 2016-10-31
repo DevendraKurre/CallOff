@@ -80,6 +80,7 @@ public class Worker extends AsyncTask {
                 toast = Toast.makeText(context, Constants.LOGIN_FAILED, Toast.LENGTH_SHORT);
             }
         } else if (this.task == task.REGISTER) {
+            //TODO register code add here
             toast = Toast.makeText(context, Constants.LOGIN_FAILED, Toast.LENGTH_SHORT);
         } else if (this.task == task.RESET) {
             toast = Toast.makeText(context, Constants.LOGIN_FAILED, Toast.LENGTH_SHORT);
