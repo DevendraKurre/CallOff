@@ -35,6 +35,7 @@ public class Messanger {
                     {
                         Message message = read_header();
                         if (message.messageType == Header.MESSAGE) {
+                            MainActivity.vibrator.vibrate(250);
                             final String response = read_message(message.messageLength);
                             message.message = response;
                             myDbHelper.insertMessage(message);
@@ -56,6 +57,7 @@ public class Messanger {
                             if(MainActivity.callActivity != null)
                                 MainActivity.callActivity.startCall();
                         } else if (message.messageType == Header.AUDIO) {
+                            MainActivity.vibrator.vibrate(250);
                             System.out.println("Audio message received");
                             String timestamp = new SimpleDateFormat("yyyyMMdd-hh-mm-ss").format(new Date());
                             message.message = "/" + Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Constants.DIRECTORY_AUDIO + "/" + timestamp + message.sender + ".3gp";

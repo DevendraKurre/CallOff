@@ -73,6 +73,8 @@ public class Worker extends AsyncTask {
             if (response!= null && !response.isEmpty() && response.contains("#")) {
                 MainActivity.USER_NAME = response.split("#")[0];
                 MainActivity.PHONE_NUMBER = response.split("#")[1];
+                MyDatabaseHelper myDbHelper = new MyDatabaseHelper(this.context);
+                myDbHelper.userLogin(MainActivity.USER_NAME, MainActivity.PHONE_NUMBER);
                 Worker worker = new Worker(this.context, Constants.task.GET_CONTACTS);
                 worker.execute(Constants.GET_CONTACTS_URL);
                 toast = Toast.makeText(context, Constants.LOGIN_SUCCESS, Toast.LENGTH_SHORT);
@@ -99,7 +101,7 @@ public class Worker extends AsyncTask {
         for (String eachContact : dataArray) {
             String[] contact_details = eachContact.split("#");
             Contact newContact = new Contact(contact_details[0], contact_details[1], contact_details[2]);
-            if (!ContactList.lContacts.contains(newContact))ContactList.lContacts.add(newContact);
+            if (!ContactList.lContacts.contains(newContact) && !newContact.phone_number.equals(MainActivity.PHONE_NUMBER)) ContactList.lContacts.add(newContact);
         }
     }
 

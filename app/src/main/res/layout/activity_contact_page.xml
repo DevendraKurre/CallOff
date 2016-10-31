@@ -34,7 +34,7 @@
         android:layout_above="@+id/btnSend"
         android:choiceMode="singleChoice"
         android:transcriptMode="alwaysScroll"
-        android:stackFromBottom="true" />
+        android:stackFromBottom="true"/>
 
     <Button
         android:layout_width="wrap_content"

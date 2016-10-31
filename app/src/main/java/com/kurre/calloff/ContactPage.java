@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -128,8 +130,9 @@ public class ContactPage extends AppCompatActivity implements View.OnClickListen
 
     @Override
     protected void onDestroy() {
-        System.out.println("On destroy called");
         super.onDestroy();
+        System.out.println("On destroy called");
+        MainActivity.mainPage.refreshRecentChat();
     }
 
     public void refreshContactChat() {
@@ -184,14 +187,21 @@ public class ContactPage extends AppCompatActivity implements View.OnClickListen
             if (message != null) {
                 TextView tvContactName = (TextView) v.findViewById(R.id.tvContactName);
                 TextView tvContactNumber = (TextView) v.findViewById(R.id.tvContactNumber);
+                TextView tcTimeStamp = (TextView) v.findViewById(R.id.tvTimeStamp);
                 String name = message.sender;
-                if(ContactList.getContact(message.sender) != null)
+                if(name.equals(MainActivity.PHONE_NUMBER))
+                    name = "Me";
+                else if(ContactList.getContact(message.sender) != null)
                     name = ContactList.getContact(message.sender).name;
                 tvContactName.setText(name);
                 if(message.messageType == Header.MESSAGE)
                     tvContactNumber.setText(message.message);
                 else
                     tvContactNumber.setText("Audio Message");
+                if(!message.timestamp.isEmpty()) {
+                    String timestamp = new SimpleDateFormat("h:mm a").format(new Date(message.timestamp));
+                    tcTimeStamp.setText(timestamp);
+                }
             }
             return v;
         }

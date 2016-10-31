@@ -21,6 +21,7 @@ public class Message {
         this.timestamp = new Date().toString();
         this.messageDirection = messageDirection;
         this.message = message;
+        this.timestamp = new Date().toString();
     }
 
     public Message(String sender, String receiver, String messageDirection, int messgeLength) {

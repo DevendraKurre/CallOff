@@ -25,8 +25,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public static final String USER_DETAILS_ID = "id";
     public static final String USER_DETAILS_USER_NAME = "user_name";
     public static final String USER_DETAILS_CONTACT_NUMBER = "contact_number";
-    public static final String USER_DETAILS_GENDER = "gender";
-    public static final String USER_DETAILS_PROFILE_PIC = "profile_pic";
     String query_create_table_user_details = "CREATE TABLE " + USER_DETAILS_TABLE + " (" +
             USER_DETAILS_ID + " INTEGER PRIMARY KEY," +
             USER_DETAILS_USER_NAME + " TEXT," +
@@ -76,13 +74,15 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
     public long insertMessage(Message message) {
         SQLiteDatabase myDb = getWritableDatabase();
         ContentValues content = new ContentValues();
-        content.put(MESSAGE_TABLE_TIMESTAMP, new Date().toString());
+        content.put(MESSAGE_TABLE_TIMESTAMP, message.timestamp);
         content.put(MESSAGE_TABLE_DIRECTION, message.messageDirection);
         content.put(MESSAGE_TABLE_SENDER, message.sender);
         content.put(MESSAGE_TABLE_RECEIVER, message.reciepient);
         content.put(MESSAGE_TABLE_CONTENT, message.message);
         content.put(MESSAGE_TABLE_TYPE, message.messageType);
-        return myDb.insert(MESSAGE_TABLE, null, content);
+        long result = myDb.insert(MESSAGE_TABLE, null, content);
+        myDb.close();
+        return result;
     }
 
     public List<Message> readMessageFrom(String number) {
@@ -105,6 +105,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
             System.out.println(content + " -> " + sender + " -> " + receiver + " -> " + direction + " -> " + timestamp);
         }
         crcr.close();
+        myDb.close();
         return lMessages;
     }
 
@@ -116,5 +117,36 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
                 recentChat.put(eachContact, msg.get(msg.size()-1));
         }
         return recentChat;
+    }
+
+    public long userLogin(String userName, String contactNumber) {
+        SQLiteDatabase myDb = getWritableDatabase();
+        ContentValues content = new ContentValues();
+        content.put(USER_DETAILS_USER_NAME, userName);
+        content.put(USER_DETAILS_CONTACT_NUMBER, contactNumber);
+        long result = myDb.insert(USER_DETAILS_TABLE, null, content);
+        myDb.close();
+        return result;
+    }
+
+    public boolean checkActiveLogin() {
+        SQLiteDatabase myDb = getReadableDatabase();
+        String query = "select * from " + USER_DETAILS_TABLE;
+        Cursor crcr = myDb.rawQuery(query, null);
+        if(crcr.getCount() == 0) {
+            crcr.close();
+            myDb.close();
+            return false;
+        } else {
+            while (crcr.moveToNext()) {
+                String userName = crcr.getString(crcr.getColumnIndex(USER_DETAILS_USER_NAME));
+                String contactNumber = crcr.getString(crcr.getColumnIndex(USER_DETAILS_CONTACT_NUMBER));
+                MainActivity.USER_NAME = userName;
+                MainActivity.PHONE_NUMBER = contactNumber;
+            }
+            crcr.close();
+            myDb.close();
+            return true;
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.Vibrator;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,7 +16,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     public static ContactPage contactPage = null;
     public static MainActivity mainPage = null;
     public static MyDatabaseHelper myDbHelper;
+    public static Vibrator vibrator;
 
     ListView lvResentChatList;
     MyRecentChatListAdapter myAdapter;
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         myMessanger.context = this;
         mainPage = this;
         myMessanger.start_messanger();
+        vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
 
         lvResentChatList = (ListView) findViewById(R.id.lvResentList);
         lvResentChatList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -75,11 +80,12 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Map<Contact, Message> lContact = MainActivity.myDbHelper.readRecentChat();;
+                mRecentChat = MainActivity.myDbHelper.readRecentChat();
                 HashMap<Integer, Contact> contacts = new HashMap<>();
                 int i = 0;
-                for (Contact contact : lContact.keySet()) {
-                    contacts.put(i, contact);
+                for (Contact contact : mRecentChat.keySet()) {
+                    System.out.println(contact.name);
+                    contacts.put(i++, contact);
                 }
                 myAdapter.mContacts = contacts;
                 myAdapter.notifyDataSetChanged();
@@ -121,11 +127,16 @@ public class MainActivity extends AppCompatActivity {
             if (contact != null) {
                 TextView tvContactName = (TextView) v.findViewById(R.id.tvContactName);
                 TextView tvContactNumber = (TextView) v.findViewById(R.id.tvContactNumber);
+                TextView tcTimeStamp = (TextView) v.findViewById(R.id.tvTimeStamp);
                 tvContactName.setText(contact.name);
                 if(mRecentChat.get(contact).messageType == Header.AUDIO)
                     tvContactNumber.setText("Audio Message");
                 else
                     tvContactNumber.setText(mRecentChat.get(contact).message);
+                if(!mRecentChat.get(contact).timestamp.isEmpty()) {
+                    String timestamp = new SimpleDateFormat("h:mm a").format(new Date(mRecentChat.get(contact).timestamp));
+                    tcTimeStamp.setText(timestamp);
+                }
             }
             return v;
         }
