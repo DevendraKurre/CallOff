@@ -98,8 +98,10 @@ public class ContactList extends AppCompatActivity {
             if (contact != null) {
                 TextView tvContactName = (TextView) v.findViewById(R.id.tvContactName);
                 TextView tvContactNumber = (TextView) v.findViewById(R.id.tvContactNumber);
+                TextView tcTimeStamp = (TextView) v.findViewById(R.id.tvTimeStamp);
                 tvContactName.setText(contact.name);
                 tvContactNumber.setText(contact.phone_number);
+                tcTimeStamp.setText("");
             }
             return v;
         }

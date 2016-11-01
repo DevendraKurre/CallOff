@@ -18,8 +18,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -122,7 +120,8 @@ public class ContactPage extends AppCompatActivity implements View.OnClickListen
                     MainActivity.myMessanger.send_message(message);
                 }
             }).start();
-
+            myAdapter.addMessage(message);
+            myAdapter.notifyDataSetChanged();
             return true;
         }
         return true;
@@ -198,9 +197,15 @@ public class ContactPage extends AppCompatActivity implements View.OnClickListen
                     tvContactNumber.setText(message.message);
                 else
                     tvContactNumber.setText("Audio Message");
-                if(!message.timestamp.isEmpty()) {
-                    String timestamp = new SimpleDateFormat("h:mm a").format(new Date(message.timestamp));
-                    tcTimeStamp.setText(timestamp);
+                try {
+                    if (!message.timestamp.isEmpty()) {
+                        //String timestamp = new SimpleDateFormat("h:mm a").format(new Date(message.timestamp));
+                        String[] time = message.timestamp.split(" ")[3].split(":");
+                        String timestamp = time[0] + ":" + time[1] + " " + (Integer.valueOf(time[0]) < 12 ? "am" : "pm");
+                        tcTimeStamp.setText(timestamp);
+                    }
+                } catch(IllegalArgumentException ex) {
+                    tcTimeStamp.setText("");
                 }
             }
             return v;

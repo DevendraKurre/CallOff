@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static String PHONE_NUMBER;
 
     public static Messanger myMessanger = new Messanger();
+    public static NewMessanger myMediaMessanger;
     public static Call callActivity = null;
     public static ContactPage contactPage = null;
     public static MainActivity mainPage = null;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         myMessanger.context = this;
         mainPage = this;
         myMessanger.start_messanger();
+        myMediaMessanger = NewMessanger.getNewMessanger();
         vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
 
         lvResentChatList = (ListView) findViewById(R.id.lvResentList);
@@ -133,9 +135,15 @@ public class MainActivity extends AppCompatActivity {
                     tvContactNumber.setText("Audio Message");
                 else
                     tvContactNumber.setText(mRecentChat.get(contact).message);
-                if(!mRecentChat.get(contact).timestamp.isEmpty()) {
-                    String timestamp = new SimpleDateFormat("h:mm a").format(new Date(mRecentChat.get(contact).timestamp));
-                    tcTimeStamp.setText(timestamp);
+                try {
+                    if (!mRecentChat.get(contact).timestamp.isEmpty()) {
+                        //String timestamp = new SimpleDateFormat("h:mm a").format(new Date(mRecentChat.get(contact).timestamp));
+                        String[] time = mRecentChat.get(contact).timestamp.split(" ")[3].split(":");
+                        String timestamp = time[0] + ":" + time[1] + " " + (Integer.valueOf(time[0]) < 12 ? "am" : "pm");
+                        tcTimeStamp.setText(timestamp);
+                    }
+                } catch(IllegalArgumentException ex) {
+                    tcTimeStamp.setText("");
                 }
             }
             return v;
